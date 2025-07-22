@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>¿Qué Pokémon Inicial Eres?</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #cceaff, #fff6f6);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      margin-top: 40px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .question h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .options button {
+      background-color: #f0f8ff;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 5px 0;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    .options button:hover {
+      background-color: #d0ebff;
+    }
+    #result {
+      text-align: center;
+      margin-top: 40px;
+    }
+    #result img {
+      max-width: 200px;
+      margin-top: 20px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>¿Qué Pokémon Inicial Eres?</h1>
+    <div id="quiz"></div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const pokemonImages = {
+      Bulbasaur: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+      Snivy: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/495.png",
+      Sprigatito: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/906.png",
+      Charmander: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
+      Scorbunny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/813.png",
+      Fuecoco: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/909.png",
+      Squirtle: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
+      Froakie: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/656.png",
+      Quaxly: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/912.png",
+    };
+
+    const pokemonDescriptions = {
+      Bulbasaur: "Eres tranquilo, leal y te adaptas a cualquier situación. Tienes una energía verde que calma a todos a tu alrededor.",
+      Snivy: "Eres estratega y elegante, con una inteligencia sutil. No hablas mucho, pero cuando lo haces, todos escuchan.",
+      Sprigatito: "Creativo, curioso y con carisma natural. Amas lo bonito y tienes la habilidad de hacer que todo sea más estético.",
+      Charmander: "Pasión y chispa son tu motor. Aunque puedes ser impulsivo, tu energía es contagiosa y empuja a otros a moverse.",
+      Scorbunny: "Inquieto, divertido y competitivo. Donde tú estás, hay movimiento. Nunca sabes quedarte quieto… ni aburrido.",
+      Fuecoco: "El alma caótica del grupo. No te importa parecer raro si eso significa disfrutar el momento. Tienes más profundidad de la que dejas ver.",
+      Squirtle: "Relajado y confiable. Eres el que mantiene la calma cuando todo arde. Siempre encuentras una salida práctica.",
+      Froakie: "Observador, reservado y muy adaptable. Aunque no lo digas, lo ves todo. Eres un ninja emocional.",
+      Quaxly: "Estilo y seguridad. Tienes personalidad para rato y una confianza que arrastras sin esfuerzo. Eres la diva elegante del grupo."
+    };
+
+    const questions = [
+      {
+        question: "¿Cómo organizas tu maleta para un viaje?",
+        answers: [
+          { text: "Doblo todo por color y estilo.", points: { Snivy: 2, Sprigatito: 2 } },
+          { text: "Echo lo primero que veo.", points: { Fuecoco: 2, Scorbunny: 2 } },
+          { text: "Hago una lista, reviso 3 veces y luego la pierdo.", points: { Froakie: 2, Bulbasaur: 2 } },
+        ]
+      },
+      {
+        question: "¿Qué harías si alguien pisa tu zapato nuevo en el metro?",
+        answers: [
+          { text: "Le sonrío con odio pasivo-agresivo.", points: { Snivy: 2, Quaxly: 2 } },
+          { text: "Grito: “¡Eh, mis zapatillas edición limitada!”", points: { Scorbunny: 2, Charmander: 2 } },
+          { text: "Me bajo en la siguiente estación para respirar.", points: { Froakie: 2, Bulbasaur: 2 } },
+        ]
+      },
+      {
+        question: "Un domingo sin planes. ¿Qué haces?",
+        answers: [
+          { text: "Ordeno mi estantería por emoción que me provoca cada libro.", points: { Snivy: 2, Bulbasaur: 2 } },
+          { text: "Me uno a una actividad rara como “búsqueda de ovnis local”.", points: { Fuecoco: 2, Scorbunny: 2 } },
+          { text: "Me hago un sándwich gigante y veo documentales que no entiendo.", points: { Quaxly: 2, Squirtle: 2 } },
+        ]
+      },
+      {
+        question: "¿Qué emoji usas más?",
+        answers: [
+          { text: "🧠", points: { Snivy: 2, Bulbasaur: 2 } },
+          { text: "😂", points: { Fuecoco: 2, Scorbunny: 2 } },
+          { text: "😎", points: { Quaxly: 2, Froakie: 2 } },
+        ]
+      },
+      {
+        question: "¿Te invitan a un karaoke. Qué cantas?",
+        answers: [
+          { text: "Una balada dramática con mucho sentimiento.", points: { Sprigatito: 2, Bulbasaur: 2 } },
+          { text: "Algo ridículo para hacer reír a todos.", points: { Scorbunny: 2, Fuecoco: 2 } },
+          { text: "No canto, dirijo al grupo como un maestro zen.", points: { Snivy: 2, Quaxly: 2 } },
+        ]
+      },
+      {
+        question: "Tu mochila es...",
+        answers: [
+          { text: "Compacta, limpia y con libreta y boli siempre.", points: { Snivy: 2, Froakie: 2 } },
+          { text: "Caótica, con cosas que no recuerdo haber metido.", points: { Fuecoco: 2, Scorbunny: 2 } },
+          { text: "Una extensión de mi personalidad: llena de snacks.", points: { Bulbasaur: 2, Squirtle: 2 } },
+        ]
+      },
+      {
+        question: "Te dicen que vas a vivir en una isla desierta. ¿Qué piensas primero?",
+        answers: [
+          { text: "¿Tendrá Wi-Fi?", points: { Quaxly: 2, Snivy: 2 } },
+          { text: "¡Aventura!", points: { Charmander: 2, Scorbunny: 2 } },
+          { text: "¿Hay manera de salir antes del jueves?", points: { Froakie: 2, Bulbasaur: 2 } },
+        ]
+      },
+      {
+        question: "¿Cuál es tu forma favorita de celebrar algo?",
+        answers: [
+          { text: "Planear una cena tranquila con amigos selectos.", points: { Bulbasaur: 2, Sprigatito: 2 } },
+          { text: "Improvisar una fiesta con globos y karaoke.", points: { Scorbunny: 2, Fuecoco: 2 } },
+          { text: "Compartir memes sobre el evento, y no ir.", points: { Quaxly: 2, Froakie: 2 } },
+        ]
+      },
+      {
+        question: "Elige una frase para tu camiseta personalizada:",
+        answers: [
+          { text: "“Todo bajo control (aparente).”", points: { Snivy: 2, Bulbasaur: 2 } },
+          { text: "“No sé qué hago, pero lo hago bien.”", points: { Fuecoco: 2, Scorbunny: 2 } },
+          { text: "“Yo vine por la comida.”", points: { Squirtle: 2, Quaxly: 2 } },
+        ]
+      },
+      {
+        question: "Tu mayor talento oculto:",
+        answers: [
+          { text: "Aprender cosas rápido sin decirlo.", points: { Snivy: 2, Froakie: 2 } },
+          { text: "Hacer ruidos de animales con la boca.", points: { Fuecoco: 2, Scorbunny: 2 } },
+          { text: "Memorizar datos inúatiles que luego sorprenden.", points: { Quaxly: 2, Bulbasaur: 2 } },
+        ]
+      },
+    ];
+
+    const quizContainer = document.getElementById("quiz");
+    const resultContainer = document.getElementById("result");
+
+    let currentQuestion = 0;
+    let scores = {};
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      const questionHTML = `
+        <div class="question">
+          <h3>${q.question}</h3>
+          <div class="options">
+            ${q.answers
+              .map(
+                (a, i) =>
+                  `<button onclick="selectAnswer(${i})">${a.text}</button>`
+              )
+              .join("")}
+          </div>
+        </div>`;
+      quizContainer.innerHTML = questionHTML;
+    }
+
+    function selectAnswer(index) {
+      const selected = questions[currentQuestion].answers[index];
+      for (let poke in selected.points) {
+        scores[poke] = (scores[poke] || 0) + selected.points[poke];
+      }
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      quizContainer.innerHTML = "";
+      let best = null;
+      let max = -1;
+      for (let poke in scores) {
+        if (scores[poke] > max) {
+          max = scores[poke];
+          best = poke;
+        }
+      }
+
+      const description = pokemonDescriptions[best];
+      const image = pokemonImages[best];
+      const tweetText = `¡Descubrí que soy ${best}, el Pokémon inicial! 💫🧪 ¿Y tú? Haz el test aquí:`;
+      const shareUrl = encodeURIComponent("https://tupagina.com/test-pokemon"); // Cambia por tu URL real
+      const tweetLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${shareUrl}`;
+
+      resultContainer.innerHTML = `
+        <h2>¡Tu Pokémon inicial es <span style="color:#2d72fc">${best}</span>!</h2>
+        <img src="${image}" alt="${best}" />
+        <p style="font-size:18px; margin-top:15px;">${description}</p>
+        <a href="${tweetLink}" target="_blank" style="
+          display:inline-block;
+          margin-top:20px;
+          padding:10px 20px;
+          background-color:#1da1f2;
+          color:white;
+          border-radius:8px;
+          text-decoration:none;
+          font-weight:bold;
+        ">Compartir en Twitter/X</a>
+      `;
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
